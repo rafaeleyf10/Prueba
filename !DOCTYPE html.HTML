@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balotario UNSA · Ciencias Biológicas y Biomédicas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --ink:#1c2b3a;
+    --navy:#122238;
+    --paper:#f6f2e9;
+    --paper-2:#efe8d8;
+    --gold:#b7893f;
+    --gold-deep:#8f6a2d;
+    --green:#2f5d4f;
+    --red:#a13d3d;
+    --line: rgba(18,34,56,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(183,137,63,0.09), transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(47,93,79,0.08), transparent 45%);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display:flex;
+    justify-content:center;
+    padding: 28px 16px 60px;
+  }
+  .wrap{ width:100%; max-width: 780px; }
+
+  header.top{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 14px; margin-bottom: 22px;
+  }
+  .brand-eyebrow{
+    text-transform:uppercase; letter-spacing:.14em; font-size:11px; color: var(--gold-deep); font-weight:700;
+  }
+  h1{
+    font-family:'Fraunces', serif; font-weight:700; font-size: 30px; margin: 4px 0 0; color: var(--navy); line-height:1.05;
+  }
+  .stat-pill{
+    font-family:'Fraunces', serif; text-align:right; color: var(--navy);
+  }
+  .stat-pill .n{ font-size:28px; font-weight:700; }
+  .stat-pill .l{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#5a6a7a; }
+
+  .card{
+    background: #fffdf8;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 0 1px 0 rgba(18,34,56,0.05), 0 12px 30px -20px rgba(18,34,56,0.35);
+    padding: 26px 26px 22px;
+  }
+
+  /* ---- SETUP SCREEN ---- */
+  #setup .lead{ font-size:15px; color:#3a4a5a; line-height:1.55; margin: 0 0 20px;}
+  .subject-grid{
+    display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 22px;
+  }
+  @media (max-width:480px){ .subject-grid{ grid-template-columns: 1fr; } }
+  .subject-chip{
+    border:1px solid var(--line); border-radius:3px; padding:10px 12px;
+    display:flex; align-items:center; justify-content:space-between; cursor:pointer;
+    font-size:13.5px; background:#fff;
+    transition: border-color .15s, background .15s;
+  }
+  .subject-chip .cnt{ color:#8a95a0; font-variant-numeric: tabular-nums; }
+  .subject-chip.active{ border-color: var(--gold-deep); background: #fbf3e3; }
+  .subject-chip input{ display:none; }
+
+  .row-inline{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .size-btn{
+    border:1px solid var(--line); background:#fff; padding:9px 16px; border-radius:3px; cursor:pointer;
+    font-family:'Inter'; font-weight:600; font-size:13px; color:var(--ink);
+  }
+  .size-btn.active{ background: var(--navy); color:#fff; border-color:var(--navy); }
+
+  button.primary{
+    width:100%; padding:15px; border:none; border-radius:3px; cursor:pointer;
+    background: var(--navy); color:#fff; font-family:'Fraunces',serif; font-weight:600; font-size:17px;
+    letter-spacing:.01em;
+    transition: background .15s;
+  }
+  button.primary:hover{ background:#0c1a2c; }
+  button.ghost{
+    width:100%; padding:13px; border:1px solid var(--line); border-radius:3px; cursor:pointer;
+    background:transparent; color:var(--navy); font-family:'Inter'; font-weight:600; font-size:14px; margin-top:10px;
+  }
+
+  /* ---- QUIZ SCREEN ---- */
+  #quiz{ display:none; }
+  .progress-track{ height:5px; background:var(--paper-2); border-radius:3px; overflow:hidden; margin-bottom:18px; }
+  .progress-fill{ height:100%; background: linear-gradient(90deg, var(--gold-deep), var(--gold)); width:0%; transition:width .25s; }
+
+  .meta-row{ display:flex; justify-content:space-between; font-size:12px; color:#7a8695; margin-bottom:10px; letter-spacing:.02em; text-transform:uppercase; font-weight:600;}
+  .qtext{ font-family:'Fraunces', serif; font-size:20px; line-height:1.35; color:var(--navy); margin: 4px 0 20px; font-weight:600;}
+
+  .opt{
+    display:flex; gap:12px; align-items:flex-start; padding:13px 14px; margin-bottom:9px;
+    border:1px solid var(--line); border-radius:3px; cursor:pointer; background:#fff;
+    font-size:14.5px; line-height:1.4;
+  }
+  .opt:hover{ border-color:#b8bfc8; }
+  .opt .letter{
+    flex:0 0 24px; height:24px; border-radius:50%; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; color:#5a6a7a;
+  }
+  .opt.selected{ border-color: var(--navy); background:#f1f4f8; }
+  .opt.selected .letter{ background:var(--navy); color:#fff; border-color:var(--navy);}
+  .opt.correct{ border-color: var(--green); background:#eef5f0; }
+  .opt.correct .letter{ background:var(--green); border-color:var(--green); color:#fff;}
+  .opt.wrong{ border-color: var(--red); background:#f8eeee; }
+  .opt.wrong .letter{ background:var(--red); border-color:var(--red); color:#fff;}
+  .opt.disabled{ cursor:default; }
+
+  .nav-row{ display:flex; gap:10px; margin-top:18px; }
+  .nav-row button{ flex:1; }
+  button.secondary{
+    padding:13px; border:1px solid var(--line); background:#fff; color:var(--navy);
+    font-family:'Inter'; font-weight:600; border-radius:3px; cursor:pointer; font-size:14px;
+  }
+  button.secondary:disabled{ opacity:.35; cursor:default; }
+  button.next{
+    padding:13px; border:none; background:var(--navy); color:#fff; border-radius:3px;
+    font-family:'Inter'; font-weight:600; cursor:pointer; font-size:14px;
+  }
+  button.next:disabled{ opacity:.35; cursor:default; }
+
+  /* ---- RESULTS ---- */
+  #results{ display:none; }
+  .score-hero{ text-align:center; padding: 10px 0 24px; }
+  .score-hero .num{ font-family:'Fraunces',serif; font-size:64px; font-weight:700; color:var(--navy); line-height:1; }
+  .score-hero .den{ font-size:15px; color:#7a8695; margin-top:4px; }
+  .breakdown{ margin-top: 8px; }
+  .b-row{ display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid var(--line); font-size:13.5px;}
+  .b-row .name{ flex:0 0 150px; color:#3a4a5a; }
+  .b-row .bar-track{ flex:1; height:8px; background:var(--paper-2); border-radius:4px; overflow:hidden;}
+  .b-row .bar-fill{ height:100%; background:var(--gold-deep); }
+  .b-row .frac{ flex:0 0 44px; text-align:right; color:#5a6a7a; font-variant-numeric:tabular-nums; }
+
+  footer.note{ text-align:center; font-size:11.5px; color:#96a0aa; margin-top:22px; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <div class="brand-eyebrow">Academia · Simulacro de admisión</div>
+      <h1>Balotario UNSA<br>Biológicas &amp; Biomédicas</h1>
+    </div>
+    <div class="stat-pill">
+      <div class="n" id="bankCount">150</div>
+      <div class="l">preguntas</div>
+    </div>
+  </header>
+
+  <!-- SETUP -->
+  <div class="card" id="setup">
+    <p class="lead">Banco de 150 preguntas compilado a partir de los exámenes de admisión UNSA I Fase 2022 y 2024 (Ciencias Biológicas y Biomédicas), más preguntas de refuerzo en los mismos cursos. Elige los cursos y el tamaño del simulacro.</p>
+    <div class="subject-grid" id="subjectGrid"></div>
+    <div class="row-inline" id="sizeRow">
+      <button class="size-btn" data-n="20">20 preguntas</button>
+      <button class="size-btn" data-n="50">50 preguntas</button>
+      <button class="size-btn active" data-n="all">Todas (según curso)</button>
+    </div>
+    <button class="primary" id="startBtn">Comenzar simulacro</button>
+    <button class="ghost" id="resetProgress">Borrar progreso guardado</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="card" id="quiz">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="meta-row">
+      <span id="qCounter">Pregunta 1 de 20</span>
+      <span id="qSubject">Matemática</span>
+    </div>
+    <div class="qtext" id="qText"></div>
+    <div id="optsWrap"></div>
+    <div class="nav-row">
+      <button class="secondary" id="prevBtn">← Anterior</button>
+      <button class="next" id="nextBtn" disabled>Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card" id="results">
+    <div class="score-hero">
+      <div class="num" id="scoreNum">0/0</div>
+      <div class="den" id="scoreMsg">respuestas correctas</div>
+    </div>
+    <div class="breakdown" id="breakdown"></div>
+    <button class="primary" id="retryBtn" style="margin-top:22px;">Nuevo simulacro</button>
+  </div>
+
+  <footer class="note">Fuente de contenido: exámenes Lumbreras/ADUNI · Admisión UNSA I Fase 2022 y 2024 (Ciencias Biológicas y Biomédicas), más preguntas de refuerzo elaboradas para completar el balotario. Tus respuestas se guardan solo en este navegador.</footer>
+</div>
+
+<script>
+/* ================== BANCO DE PREGUNTAS ================== */
+// s = subject, q = question, o = options, c = correct index (0-based)
+const BANK = [
+// ---------- UNSA 2022 (1-50) ----------
+{s:"Matemática",q:"Determine el área de una región rectangular, sabiendo que uno de sus vértices es el punto (–3; 5) y un lado está contenido en la recta L: 3x–4y+12=0 y mide 2,5 cm.",o:["9,5 cm²","12 cm²","8,5 cm²","9 cm²","8,2 cm²"],c:2},
+{s:"Matemática",q:"Seis fichas con números del 4 al 9 se colocan en las cajas A y B; las sumas de A y B difieren en 21. Si solo hay dos fichas en A, ¿cuál alternativa es correcta?",o:["En la caja B está la ficha con el número 9","En la caja A hay dos fichas con números pares","En la caja B hay 3 fichas con número impar","En la caja B hay 3 fichas con número par","La ficha con el número 7 está en la caja A"],c:0},
+{s:"Matemática",q:"Serie gráfica de figuras con palitos (caja L girando progresivamente): señale la figura que continúa en la serie propuesta.",o:["Opción A","Opción B","Opción C","Opción D","Opción E"],c:0},
+{s:"Matemática",q:"Dos hermanos pagan una cena: la suma de lo que deben pagar excede a su diferencia en S/900, y pagan según la relación de sus edades, que es 5/3. ¿Cuánto pagará el hermano mayor?",o:["S/500","S/400","S/450","S/800","S/750"],c:4},
+{s:"Matemática",q:"En una charla asisten 180 personas (5 damas por cada 4 varones). Se retiran tantos varones como damas y quedan 7 damas por cada 5 varones. ¿Cuántas damas y varones quedaron?",o:["140 damas y 100 varones","50 damas y 70 varones","100 damas y 80 varones","30 damas y 30 varones","70 damas y 50 varones"],c:4},
+{s:"Matemática",q:"En una caja hay 4 pernos largos, 3 intermedios y 2 cortos; se escogen 2 al azar. Si n es la probabilidad de escoger 2 cortos y m la de escoger 2 largos, calcule n+m.",o:["7/36","1/36","4/36","2/36","6/36"],c:0},
+{s:"Matemática",q:"Figuras en cruz construidas con palitos de fósforo, creciendo en tamaño. Halle el número máximo de cuadrados de una figura similar usando 304 palitos.",o:["26","101","25","93","19"],c:3},
+{s:"Matemática",q:"9 artesanos tejen 10 ponchos en 20 días. Para tejer 40 ponchos en 30 días, ¿cuántos artesanos triplemente eficientes se deben contratar adicionalmente?",o:["3","6","7","4","5"],c:4},
+{s:"Matemática",q:"Si 2x–4=x+3, y con ese valor de x se evalúa una expresión relacionada al enunciado gráfico, halle el resultado pedido.",o:["11","10","13","7","9"],c:1},
+{s:"Álgebra",q:"Determine el área máxima de una región rectangular, donde uno de sus lados mide (x+2) metros y el perímetro es 52 metros.",o:["132 m²","80 m²","144 m²","160 m²","169 m²"],c:4},
+{s:"Álgebra",q:"Sobre matrices: I) Si A=[[1,1],[-1,0]], entonces A¹⁸=I. II) Si A es simétrica, (A+Aᵀ) es simétrica. III) Si A y B son antisimétricas, (AB)ᵀ=AB. Determine la secuencia V o F.",o:["FFF","VFV","VVV","VFF","VVF"],c:4},
+{s:"Aritmética",q:"Patricia recibe un descuento del 10% y uno adicional del 20% por tarjeta de tienda. ¿Cuál es el descuento total?",o:["29%","30%","28%","25%","26%"],c:2},
+{s:"Aritmética",q:"Luis desea obtener en 5 años S/50 000, con una tasa del 12% simple anual. ¿Cuánto debe depositar hoy?",o:["S/25 000","S/32 150","S/33 150","S/28 250","S/31 250"],c:4},
+{s:"Geometría",q:"Un terreno triangular tiene lados de números pares consecutivos; el ángulo mayor mide el doble del menor, cuyo coseno es 3/4. Determine el perímetro.",o:["30 u","34 u","26 u","28 u","32 u"],c:0},
+{s:"Psicología",q:"¿Qué alternativa contiene los motivos más evolucionados del orden superior, según la jerarquía de necesidades?",o:["Necesidades fisiológicas","Necesidades de seguridad","Necesidades de pertenencia","Necesidades de autorrealización","Necesidades de estimación"],c:3},
+{s:"Psicología",q:"¿Qué operación mental permite establecer semejanzas y diferencias entre objetos?",o:["Abstracción","Generalización","Análisis","Comparación","Síntesis"],c:3},
+{s:"Psicología",q:"El padre de Manuel escucha las opiniones de sus hijos y explica sus decisiones, generando confianza y responsabilidad. ¿A qué estilo de crianza pertenece?",o:["Autoritaria","Sobreprotectora","Indulgente","Permisiva","Con autoridad"],c:4},
+{s:"Psicología",q:"Un niño que basa su conducta en evitar el castigo o generar una recompensa se encuentra en la etapa del desarrollo moral:",o:["preconvencional","posconvencional","convencional","del contrato social","de principios universales"],c:0},
+{s:"Cívica",q:"La Comisión de la Verdad fue ratificada por el gobierno de ___, el cual modificó su nombre a Comisión de la Verdad y Reconciliación (CVR).",o:["Alberto Fujimori","Ollanta Humala","Alejandro Toledo","Valentín Paniagua","Alan García"],c:2},
+{s:"Cívica",q:"Son técnicas para la resolución de conflictos:",o:["Los objetivos comunes, la conciliación y el trabajo en equipo","El diálogo, la actitud positiva y la negociación","La mediación, el arbitraje y la negociación","La negociación, la conciliación y la mancomunidad","El arbitraje, la gobernabilidad y la mediación"],c:2},
+{s:"Química",q:"Señale el hidrocarburo alicíclico cuyo nombre es incorrecto entre: ciclopropeno, 1-metilciclobuteno, 3-etilciclopenteno, ciclobutadieno, 1,1-dimetilciclopentano.",o:["1,1-dimetilciclopentano","1-metilciclobuteno","ciclobutadieno","ciclopropeno","3-etilciclopenteno"],c:2},
+{s:"Química",q:"¿Cuántos enlaces σ y π, respectivamente, hay en la hidrazina (N₂H₄) y en el tetróxido de dinitrógeno (N₂O₄)?",o:["5σ, 2π; 5σ, 0π","5σ, 0π; 5σ, 2π","4σ, 1π; 5σ, 2π","5σ, 4π; 2σ, 3π","5σ, 0π; 2σ, 5π"],c:1},
+{s:"Química",q:"La glucosa, uno de los compuestos de las aldosas, tiene en su molécula:",o:["El grupo carbonilo","Moléculas de agua","El grupo aldehído","El grupo cetónico","Un elemento metálico central"],c:2},
+{s:"Química",q:"Respecto a los isótopos: mismas propiedades químicas; propiedades físicas diferentes; todo elemento posee dos o más isótopos naturales y estables; diferente número de nucleones; el más abundante es el de menor masa. Indique V o F en ese orden.",o:["FVVFF","VVFVV","FFVFF","FFFVV","VFVVV"],c:1},
+{s:"Biología",q:"Sobre los cambios en el número de cromosomas desde la célula germinal hasta el cigoto: complete correctamente la secuencia I (antes de meiosis I), II (dentro de meiosis I) y III (dentro de meiosis II).",o:["I: separación de homólogos; II: duplicación; III: separación de cromátidas","I: duplicación; II: separación de cromátidas; III: separación de homólogos","I: duplicación de cromosomas; II: separación de homólogos; III: separación de cromátidas hermanas","I: separación de cromátidas; II: duplicación; III: separación de homólogos","I: separación de cromátidas; II: separación de homólogos; III: duplicación"],c:2},
+{s:"Biología",q:"Las proteínas de comunicación de la membrana celular (receptores) tienen como función:",o:["Permitir el flujo de señales y sustancias con rapidez entre citoplasmas","La unión con sustancias extracelulares, como las hormonas","Identificar si la célula pertenece a determinado tejido","Ayudar a las células a localizarse y unirse en los tejidos","Permitir que los solutos atraviesen la membrana"],c:1},
+{s:"Biología",q:"El cartílago es un tejido conectivo especializado. Marque la característica que NO corresponde.",o:["Da forma a la nariz y oído externo","Sus células fabrican y secretan cartílago","Es un material intercelular líquido que resiste la compresión","Protege y amortigua las articulaciones","El hueso se forma sobre depósitos de cartílago"],c:2},
+{s:"Biología",q:"El periodo de desarrollo de una enfermedad infecciosa se caracteriza por:",o:["La multiplicación activa de los patógenos","La aparición de los síntomas característicos","El paso del patógeno de un sujeto a otro","La recuperación lenta del organismo","El ingreso del agente patógeno al huésped"],c:1},
+{s:"Física",q:"Un bloque de 10 kg está sobre un plano inclinado de 10 m a 37°, con coeficiente de fricción 0,5 (g=10 m/s²). Determine el tiempo en llegar a la base.",o:["2√10 s","4 s","2√5 s","√5 s","√10 s"],c:4},
+{s:"Física",q:"Dos vectores colineales del mismo sentido suman 14 u; al girar uno 90°, la suma vale 10 u. ¿Cuál es el módulo del vector menor?",o:["10 u","4 u","8 u","14 u","6 u"],c:4},
+{s:"Física",q:"¿Qué tiempo debe circular una corriente de 10 A por una resistencia de 4,2 Ω para elevar de 40°C a 50°C la temperatura de 480 g de agua? (1 cal=4,2 J)",o:["48 s","480 s","4,8 s","12,1 s","24,0 s"],c:0},
+{s:"Economía",q:"Los derechos económicos en el Perú tienen sus orígenes en el movimiento:",o:["medioambiental","empresarial","sindical","estudiantil","por los derechos sexuales y reproductivos"],c:2},
+{s:"Literatura",q:"Percy Gibson representa la irrupción de la arequipeñidad en la poesía del siglo XX con su poema:",o:["Evangelio democrático","El chacarero","Sachaca","Las eras","La chichería"],c:4},
+{s:"Literatura",q:"La Galatea, de Miguel de Cervantes Saavedra, es una novela:",o:["pastoril","picaresca","campestre","ejemplar","mundana"],c:0},
+{s:"Literatura",q:"La Historia general del Perú, del Inca Garcilaso de la Vega, se inicia y termina con:",o:["las guerras civiles / la llegada del primer virrey","la conquista / la muerte del último Inca","la conquista / las guerras civiles","el descubrimiento / la ejecución de Atawallpa","el descubrimiento / la llegada del pacificador La Gasca"],c:4},
+{s:"Lenguaje",q:"¿En qué forma de lenguaje ubicaría al afiche?",o:["Audiovisual","Mímico","Gestual","Simbólico","Articulado"],c:3},
+{s:"Lenguaje",q:"La defensa razonada de una opinión mediante argumentos, junto con originalidad, brevedad e importancia de la coyuntura, son características de:",o:["La tesis","La monografía","El artículo científico","El ensayo","El artículo de revisión"],c:3},
+{s:"Lenguaje",q:"“De mi abuelo su auto le han robado.” Desde la diversidad lingüística, esta expresión evidencia:",o:["Un léxico característico del castellano andino","Una estructura propia del castellano amazónico","Que el emisor carece de competencias básicas","Que es una expresión errónea en cualquier circunstancia","La interferencia lingüística del quechua"],c:4},
+{s:"Lenguaje",q:"Cuando los hablantes de lenguas no dominantes abandonan progresivamente su lengua materna a favor de la hegemónica, la actitud lingüística que se mantiene es:",o:["Lealtad idiomática","Nacionalismo lingüístico","Vergüenza idiomática","Diglosia","Asimilación lingüística"],c:2},
+{s:"Historia",q:"En el Perú prehispánico se utilizó un sistema nemotécnico (quipu) para registrar bienes y recursos. Este sistema fue creado por:",o:["la cultura Huarpa","el imperio Inca","el imperio Chanca","la cultura Tiahuanaco","el imperio Wari"],c:4},
+{s:"Historia",q:"La resistencia indígena de los incas de Vilcabamba tuvo como propósito fundamental:",o:["restablecer el Tahuantinsuyo","restablecer el poder político de Manco Inca y Sayri Túpac","eliminar la extirpación de idolatrías","restablecer los privilegios de la nobleza incaica","colocar a Tito Cusi Yupanqui como soberano inca"],c:1},
+{s:"Filosofía",q:"¿Qué paso constituye un primer intento de explicación en el método científico?",o:["La formulación de leyes","La observación de la realidad","La elaboración de hipótesis","El planteamiento del problema","La contrastación de la realidad"],c:2},
+{s:"Filosofía",q:"Sobre la posibilidad del conocimiento, si considero que lo verdadero es lo útil, me apego al enfoque:",o:["Verificacionista","Pragmatista","Dogmatista","Criticista","Relativista"],c:1},
+{s:"Geografía",q:"El estudio de la influencia del medio natural sobre las actividades humanas recibe el nombre de:",o:["Geografía antropológica","Geografía económica","Geografía humana","Geografía social","Geopolítica"],c:2},
+{s:"Razonamiento Verbal",q:"“La intemperancia es un defecto habitual en quienes ceden a sus pasiones.” El antónimo de “intemperancia” es:",o:["concupiscencia","frugalidad","desenfreno","templanza","jocundia"],c:3},
+{s:"Razonamiento Verbal",q:"“Los ___ más innovadores en el ámbito ___ facilitan la resolución de problemas que aquejan a la sociedad.”",o:["encuentros - laboral","hallazgos - artístico","eventos - cultural","inventos - científico","conflictos - bélico"],c:3},
+{s:"Comprensión Lectora",q:"Según un texto sobre consumo de alcohol, tabaco y marihuana en adolescentes, ¿qué se concluye como causa de sus graves consecuencias?",o:["Ausencia de programas de sensibilización del Ministerio de Salud","Falta de información sobre estadísticas oficiales","Se desconocen los perjuicios ocasionados por el consumo de drogas","Las prohibiciones legales estimulan el consumo","Los padres y autoridades no se involucran en el problema"],c:2},
+{s:"Comprensión Lectora",q:"De acuerdo al mismo texto, ¿cómo se califica la concepción adolescente sobre el consumo de drogas?",o:["Existen muchos prejuicios infundados sobre el consumidor","Hay una idealización sobre la despenalización","Es una sobrevaloración de los efectos de las drogas","Se subestima el impacto en los hábitos de estudio","Predomina una noción equívoca sobre el consumo de drogas"],c:4},
+{s:"Comprensión Lectora",q:"Según un texto filosófico sobre la conciencia de la muerte, ¿qué significa “trascender nuestra finitud”?",o:["Asumir que no hay un “más allá” de la muerte","Comprender que no somos inmortales","Buscar el secreto de la eterna juventud","Un cuestionamiento existencial propiamente humano","Desentrañar el origen de la vida"],c:3},
+{s:"Comprensión Lectora",q:"Según el mismo texto sobre la dignidad humana, ¿qué afirmación es correcta?",o:["La creatividad humana no aporta a la trascendencia de la finitud","En la antigua Roma, la dignidad era atributo de todos los seres humanos","El cristianismo acentuó la idea de dignidad intrínseca en ciertos seres humanos","La reciprocidad es cualidad fundamental de la razón práctica en Occidente","Las autoridades políticas poseen hoy una dignidad superior al resto"],c:3},
+
+// ---------- UNSA 2024 (1-60) ----------
+{s:"Cívica",q:"Las funciones del Consejo Nacional de la Magistratura fueron suspendidas tras el escándalo “Cuellos Blancos”; fue disuelto y reemplazado por:",o:["El Tribunal Constitucional","La Contraloría General de la República","El Ministerio Público","La Junta Nacional de Justicia","La Defensoría del Pueblo"],c:3},
+{s:"Cívica",q:"Entidad que recibe quejas y pedidos ciudadanos sobre vulneración de derechos, elevando informes a las autoridades; su titular requiere el voto de dos tercios del Congreso.",o:["Jurado Nacional de Elecciones","Tribunal Constitucional","Contraloría General de la República","Ministerio Público","Defensoría del Pueblo"],c:4},
+{s:"Cívica",q:"Forma acrítica y etnocentrista de promover el orgullo nacional, con rasgos de mitomanía y paranoia, que apela a la emoción por encima de la razón:",o:["Identidad cultural","Discurso cosmopolita","Discurso patriótico","Identidad nacional","Discurso chauvinista"],c:4},
+{s:"Psicología",q:"Benjamín planifica sus experimentos y corrige errores para obtener un resultado positivo. Ha desarrollado habilidades de:",o:["tolerancia a la frustración","toma de decisiones","autoaprendizaje","solución de problemas","metacognición"],c:3},
+{s:"Psicología",q:"Esteban, de 16 años, se pregunta ¿quién soy?, ¿hacia dónde voy?, influenciado por su entorno. Se está propiciando el desarrollo de:",o:["la autoeficacia","la identidad personal","la imagen corporal","la identidad cultural","su proyecto de vida"],c:1},
+{s:"Psicología",q:"Escritores que, al escribir una obra, plantean un tema original y un estilo particular, han desarrollado:",o:["habilidades de redacción","pensamiento crítico","pensamiento creativo","identidad social","habilidades artísticas"],c:2},
+{s:"Filosofía",q:"Alberto sostiene que uno no se hace justo sabiendo qué es la justicia, sino realizando actos justos, evitando la mezquindad o el despilfarro. Su estrategia moral hace referencia a:",o:["un código moral","la conciencia","los sentimientos","las posibles consecuencias","un hecho"],c:4},
+{s:"Filosofía",q:"Lizbeth busca la felicidad en la imperturbabilidad, siendo insensible ante el sufrimiento y las opiniones ajenas. Esta idea es propia de la escuela ética de los:",o:["biocentristas","emotivistas","cínicos","cirenaicos","estoicos"],c:4},
+{s:"Filosofía",q:"Yahaira demuestra que las respuestas de sus compañeros no son acertadas y los induce a la reflexión hacia un concepto general. El método filosófico usado fue:",o:["la razón pura","el cartesiano","el dialéctico","la mayéutica","la duda metódica"],c:3},
+{s:"Inglés",q:"Reading on childhood obesity: Complete — “Exercise is important for building ___.”",o:["strength","anguish","sedentary","damage","obesity"],c:0},
+{s:"Inglés",q:"According to the reading on childhood obesity, which alternative is true?",o:["Sedentary life involves activity","Watching television is not unhealthy","Lack of exercise is not a problem","Doctors say regular exercise is not necessary","Lack of exercise is a reason for obesity"],c:4},
+{s:"Inglés",q:"Complete using future — A: “We do not have any more tea”. B: “I ___ to the store and get some”.",o:["am going","going","will going","will go","go"],c:3},
+{s:"Inglés",q:"Complete using pronouns: “David wants to see ___ but ___ does not want to see ___.”",o:["she - she - he","us - he - she","her - she - him","he - his - him","them - she - he"],c:2},
+{s:"Economía",q:"___ produce una disminución del poder adquisitivo del dinero y se mide con el índice de precios al consumidor.",o:["la deflación","la inflación","el desempleo","el subempleo","la pobreza"],c:1},
+{s:"Comunicación",q:"Marcelo, disconforme con la atención en un servicio, expresa su malestar como cliente mediante una:",o:["apelación","queja","pedido","reclamo","reconsideración"],c:1},
+{s:"Geografía",q:"Declive brusco del relieve submarino: en 100 km de ancho alcanza los 6000 m de profundidad, formando cañones submarinos.",o:["La pampa","El tablazo","La plataforma","La fosa marina","El talud continental"],c:4},
+{s:"Geografía",q:"Los bosques constituyen el ecosistema con mayor superficie del Perú, representando del territorio nacional aproximadamente:",o:["15,5%","20,3%","30,2%","57,3%","25,3%"],c:3},
+{s:"Química",q:"Respecto a la capa de ozono: I) evita que la radiación UV dañe a los seres vivos; II) forma parte del esmog urbano; III) está ubicada en la ionósfera. Indique V o F.",o:["VVF","VFF","VVV","FVF","VFV"],c:0},
+{s:"Historia",q:"La rebelión indígena nunca vencida por el ejército español, que llegó a formar un estado independiente en la zona del río Perené, fue liderada por:",o:["Mateo Pumacahua","Manco Inca","Túpac Catari","Túpac Amaru I","Juan Santos Atahualpa"],c:4},
+{s:"Historia",q:"En 1569, la Corona española estableció el Tribunal del Santo Oficio de la Inquisición con el propósito de:",o:["castigar a los indígenas que se resistían al bautismo","vigilar la fe y costumbres de los colonizadores españoles","desterrar el culto a los apus","desarrollar adoctrinamiento católico entre indígenas","extirpar las idolatrías andinas"],c:1},
+{s:"Historia",q:"Durante el periodo preinca e incaico, el núcleo social unido por vínculos de parentesco y reciprocidad se denominó:",o:["Hatun runas","Panaca","Marka","Ayllu","Suyos"],c:3},
+{s:"Literatura",q:"La obra de José Ruiz Rosas que dialoga con la poesía decimonónica y a la vez con señales modernas es:",o:["Enigmas - lenguaje fortuito - surrealismo","“Yo tengo un sol opaco” - metatexto - poema","Esa noche vacía - soneto - verso libre","La sola palabra - poema - silencio","“Vecino de la muerte” - lenguaje barroco - modernismo"],c:3},
+{s:"Literatura",q:"En la estrofa de Rubén Darío “Dichoso el árbol que es apenas sensitivo...” prevalece el uso del:",o:["hemistiquio","pie quebrado","asíndeton","soneto","alejandrino"],c:4},
+{s:"Literatura",q:"En la narrativa de Julio Ramón Ribeyro, la condición transgenérica está presente en:",o:["Los gallinazos sin plumas y Doblaje","La tentación del fracaso y Crónica de San Gabriel","La caza sutil y Solo para fumadores","La palabra del mudo y Atusparia","Dichos de Luder y Prosas apátridas"],c:3},
+{s:"Lenguaje",q:"Se ha utilizado correctamente el guion en: I) Sr. José Pérez-Castro; II) Perú-Brasil; III) físico-biólogomatemático; IV) lingüístico-literario.",o:["II - III - IV","I - II - IV","I - II - III","solo II - III","solo I - III"],c:1},
+{s:"Lenguaje",q:"Grupo de palabras correctamente escritas:",o:["Naufragar / Frajmento / Tatuage","Giboso / Correjir / Surjir","Jocundo / Exégesis / Enigmático","Cronolojía / Intelijente / Surjimiento","Naufrajio / Exéjesis / Rejistrar"],c:2},
+{s:"Comprensión Lectora",q:"Según un texto de Godenzzi sobre el análisis del discurso, el texto destaca por su carácter:",o:["Expositivo","Encuadrado","Didáctico","Narrativo","Argumentativo"],c:0},
+{s:"Comprensión Lectora",q:"De acuerdo al mismo texto, se puede afirmar que:",o:["La naturaleza del análisis del discurso no es aplicable","La disciplina engloba lecturas monocromáticas","El análisis aborda diversas prácticas discursivas","Los investigadores se apropian de significados paradójicos","El sentido revelado no encaja con la interpretación"],c:2},
+{s:"Comprensión Lectora",q:"Según un texto sobre arte y política, el arte expresa una relación:",o:["Equidistante","Claudicante","Sensacional","Homogénea","Paradójica"],c:4},
+{s:"Comprensión Lectora",q:"En ese mismo texto, “la implicación del arte” connota:",o:["Cada significado obtuso","Su efectividad en el mundo","El aglomerado sentir paralelo","Su permanencia irresuelta","La mediación fantástica"],c:1},
+{s:"Lenguaje",q:"Conector lógico: «La crítica de arte enjuicia el valor estético de una obra; ___, previamente, se debe describir la obra con rigurosidad».",o:["por el contrario","asimismo","luego","por consiguiente","no obstante"],c:4},
+{s:"Lenguaje",q:"Complete: “La literatura colabora en la adquisición de saberes; ___ su naturaleza ficcional, nos permite imaginar lo que acontece”.",o:["a través","incluso","así que","tal vez","más bien"],c:1},
+{s:"Lenguaje",q:"Antónimos de las palabras subrayadas (revela, rebeldía, intransigencia) en un enunciado sobre la universidad y la investigación:",o:["abstiene - empatía - transacción","oculta - sumisión - indulgencia","obstruye - parsimonia - irreverencia","calla - osadía - tolerancia","opaca - apatía - obnubilación"],c:1},
+{s:"Lenguaje",q:"Conector lógico: “El tenis es un deporte de caballeros, ___ no todo jugador de tenis es un caballero”.",o:["aunque","incluso","además","en cambio","en consecuencia"],c:3},
+{s:"Geometría",q:"En un triángulo ABC, M está en BC y N en AC, con BC=4BM y AC=4AN. Si MN=6 cm, ¿cuánto mide AB?",o:["7 cm","12 cm","9 cm","10 cm","8 cm"],c:4},
+{s:"Álgebra",q:"Halle el valor de x en una ecuación logarítmica con bases x/2, 2x y x que involucra log(2), log(4) y log(1/8), igualada a cero.",o:["1","4","16","2","8"],c:3},
+{s:"Álgebra",q:"Encuentre la ecuación estándar de una elipse cuyos focos son (–3;2) y (5;2), con eje mayor de longitud 10.",o:["(x+1)²/25+(y+2)²/9=1","(x−1)²/36+(y−2)²/4=1","(x+2)²/25+(y−1)²/9=1","(x−2)²/25+(y−1)²/9=1","(x−1)²/25+(y−2)²/9=1"],c:4},
+{s:"Aritmética",q:"Un obrero y su amigo trabajaron 2 meses. El 1er mes: 14 días del obrero y 24 del amigo, recibieron S/1494; el 2do: 21 y 18 días, recibieron S/1593. ¿Diferencia de jornales diarios entre ellos?",o:["S/5","S/7","S/6","S/9","S/8"],c:3},
+{s:"Aritmética",q:"En un evento con 126 profesores: de los de la capital, 18 son varones y 12 mujeres; de cada 24 profesores de provincia, 15 son mujeres. ¿Relación entre varones y mujeres en total?",o:["3:4","2:3","1:3","1:2","1:4"],c:0},
+{s:"Aritmética",q:"Un gráfico circular muestra las inversiones de una cuenta de 50 000 soles en 4 rubros. Si B+C = 8000 soles y se conocen los otros porcentajes, ¿cuánto se invirtió en el rubro A?",o:["25 000 soles","22 000 soles","15 000 soles","20 000 soles","4000 soles"],c:1},
+{s:"Álgebra",q:"Carmelo tiene cierto número de estudiantes. Si se triplica y se retiran 24, quedan más de 234. Si se agregan 12 al número, es menor que la diferencia entre 144 y la mitad del número. ¿Cuántos estudiantes tiene?",o:["87","90","64","98","75"],c:0},
+{s:"Aritmética",q:"Un bufete debe resolver un caso en 30 días; con 10 abogados, 6 h diarias, en 20 días resolvieron el 50%. ¿Cuántos abogados adicionales se necesitan como mínimo trabajando 8 h diarias?",o:["8","5","10","20","15"],c:1},
+{s:"Matemática",q:"Halle el término que continúa en la sucesión: 2B; 3C; 8E; 63I; ...",o:["3969 O","3970 P","3968 P","3968 Q","3969 Q"],c:3},
+{s:"Aritmética",q:"Un kilogramo de manzanas contiene de 5 a 8 unidades; uno de naranjas, de 4 a 6. ¿Cuál es el máximo peso que puede tener una decena de manzanas más una decena de naranjas?",o:["4,0 kg","4,9 kg","5,1 kg","2,4 kg","5,0 kg"],c:1},
+{s:"Matemática",q:"Carlos ordena fichas en filas: 1ª fila 7; 2ª 13; 3ª 24; 4ª 45; y así sucesivamente. ¿Cuántas fichas usó hasta la quinta fila?",o:["155","185","195","165","175"],c:4},
+{s:"Matemática",q:"La familia de un postulante consta de padre, madre y 5 hijas; cada hija tiene un solo hermano. ¿Cuántas personas hay en la familia?",o:["9","3","12","5","8"],c:4},
+{s:"Física",q:"Usain Bolt (76 kg) recorrió 100 m en 9,5 s. Calcule la energía cinética que desarrolló en la carrera.",o:["40/17 kJ","45/21 kJ","76/13 kJ","80/19 kJ","30/11 kJ"],c:3},
+{s:"Física",q:"Para medir la velocidad de la sangre se aplica un campo magnético B=0,08 T perpendicular al flujo; el diámetro del vaso es 2,0 mm y ΔVab=96 µV. Calcule la velocidad del flujo sanguíneo.",o:["0,8 m/s","1,0 m/s","0,4 m/s","0,6 m/s","0,2 m/s"],c:3},
+{s:"Física",q:"Sobre las fuerzas: I) siguen las reglas del álgebra vectorial; II) su unidad SI, el Newton, equivale a kg·m²/s; III) su intensidad se mide con un dinamómetro. Indique V o F.",o:["FVV","FFF","VVV","VFV","FFV"],c:3},
+{s:"Física",q:"Rafael se queda en la Tierra y Paola viaja a 2√2/3 c. Paola mide 60 latidos/min con su reloj. ¿Cada cuántos segundos latirá su corazón medido con el reloj de Rafael?",o:["3,5 s","1,5 s","3,0 s","2,0 s","2,5 s"],c:2},
+{s:"Biología",q:"La diabetes se origina por actividad insuficiente de las células pancreáticas productoras de insulina. Evalúe: I) el exceso de glucosa se transporta al hígado y músculos; II) la glucosa no utilizada se elimina vía renal en orina diluida; III) la falta de uso de glucosa moviliza grasas y proteínas; IV) puede derivar en retinopatía y ceguera.",o:["VFVF","FVFV","FVVV","VVVV","FFVV"],c:2},
+{s:"Biología",q:"Un ejemplo de células fijas del tejido conectivo (se originan y permanecen localmente) son los:",o:["linfocitos","neutrófilos","pericitos","plasmocitos","eosinófilos"],c:2},
+{s:"Biología",q:"Sobre el darwinismo o teoría sintética de la evolución, NO corresponde a esta teoría:",o:["La radiación adaptativa forma muchas especies desde un único ancestro","La evolución es el cambio del acervo génico de una población","Los cambios en frecuencias alélicas son causados por selección natural","La mutación aporta variabilidad genética sobre la que actúa la selección","La evolución divergente produce adaptaciones similares en organismos lejanos"],c:4},
+{s:"Biología",q:"Sobre los vasos sanguíneos y la homeostasis, podemos afirmar que:",o:["Las arterias poseen baja distensibilidad y no se estiran con facilidad","Las arteriolas regulan el flujo desde los capilares hacia las arterias","Las venas tienen la lámina elástica que se encuentra en las arterias","El flujo de arteriolas a vénulas por los capilares se llama microcirculación","Las vénulas poseen diámetro entre 10 y 100 (unidad no especificada)"],c:3},
+{s:"Biología",q:"La meiosis I dura más del 90% del tiempo total de la meiosis y se caracteriza porque:",o:["En el zigoteno comienza la separación de homólogos","En el leptoteno los homólogos se reconocen y se aparean","En la anafase I se forman las membranas nucleares","En el paquiteno se da el entrecruzamiento cromosómico","En la telofase I se produce la separación de los quiasmas"],c:3},
+{s:"Química",q:"Sobre la importancia del agua, ¿cuántas proposiciones son verdaderas? I) ~3/4 de la superficie terrestre está cubierta de agua; II) es solvente universal porque disuelve polares y no polares; III) el SO₂ es contaminante primario, soluble en agua, y contribuye a la lluvia ácida; IV) la lluvia ácida solo es producida por fuentes naturales.",o:["3","0","2","1","4"],c:2},
+{s:"Química",q:"Un compuesto dinitro aromático se reduce con Fe/HCl para formar una diamina, usado en la obtención de aminas. Indique el nombre de la amina obtenida.",o:["2,2-dimetilpropenamida","1-aminobenceno","2,4-diaminotolueno","3-amino-4-metilamina","1-metildiamina"],c:2},
+{s:"Química",q:"Sobre el radio atómico: I) el de un metal es menor que el de un no metal del mismo periodo; II) comparando [Ne]3s²3p⁴ con [Ar]4s², el segundo tiene mayor radio atómico; III) en un mismo grupo, el radio atómico y el número cuántico principal varían directamente.",o:["VVF","FVV","VVV","VFV","FVF"],c:1},
+{s:"Química",q:"¿Cuál de las siguientes sales oficiales contiene la mayor cantidad de átomos de oxígeno?",o:["Nitrito de sodio","Carbonato de potasio","Fosfato cúprico","Cromato férrico","Bisulfito de sodio"],c:3},
+{s:"Química",q:"Calcule la masa de la cetona formada a partir de 3,7 g de un alcohol secundario que se oxida, según C=12; O=16; H=1.",o:["3,0 g","3,7 g","3,9 g","3,6 g","3,3 g"],c:3},
+
+// ---------- Preguntas de refuerzo (complemento al balotario) ----------
+{s:"Matemática",q:"¿Cuál es el resultado de resolver la ecuación 2x + 5 = 17?",o:["5","6","7","8"],c:1},
+{s:"Geometría",q:"Si el perímetro de un cuadrado es 36 cm, ¿cuál es su área?",o:["64 cm²","72 cm²","81 cm²","90 cm²"],c:2},
+{s:"Aritmética",q:"Un número se incrementa en 25% y luego se reduce en 20%. ¿Cuál es el cambio neto porcentual?",o:["–5%","0%","5%","10%"],c:1},
+{s:"Geometría",q:"¿Cuánto mide la suma de los ángulos internos de un hexágono?",o:["540°","630°","720°","900°"],c:2},
+{s:"Álgebra",q:"Al factorizar la expresión x² – 9, se obtiene:",o:["(x–3)(x–3)","(x+9)(x–1)","(x–3)(x+3)","(x–1)(x+9)"],c:2},
+{s:"Física",q:"¿Cuál es la unidad de medida de la potencia en el Sistema Internacional?",o:["Joule","Watt","Newton","Pascal"],c:1},
+{s:"Física",q:"Un cuerpo cae libremente desde el reposo. ¿Qué distancia recorre en 2 s? (g=10 m/s²)",o:["10 m","15 m","20 m","25 m"],c:2},
+{s:"Química",q:"¿Cuál es el número atómico del oxígeno?",o:["6","7","8","9"],c:2},
+{s:"Química",q:"¿Qué tipo de enlace comparte electrones entre átomos no metálicos?",o:["Iónico","Covalente","Metálico","Puente de hidrógeno"],c:1},
+{s:"Biología",q:"¿Cuál es la unidad básica de la herencia?",o:["Célula","Gen","Cromosoma","Núcleo"],c:1},
+{s:"Biología",q:"¿Qué orgánulo es responsable de la producción de energía celular?",o:["Ribosoma","Mitocondria","Aparato de Golgi","Lisosoma"],c:1},
+{s:"Biología",q:"¿Cuántos pares de cromosomas tiene el ser humano?",o:["22","23","24","46"],c:1},
+{s:"Historia",q:"¿Quién fue el primer presidente del Perú, en 1823?",o:["José de San Martín","José de la Riva-Agüero","Simón Bolívar","José de la Mar"],c:1},
+{s:"Historia",q:"¿En qué año se proclamó la independencia del Perú?",o:["1810","1821","1824","1879"],c:1},
+{s:"Historia",q:"La batalla de Ayacucho, que selló la independencia sudamericana, ocurrió en:",o:["1821","1822","1824","1826"],c:2},
+{s:"Geografía",q:"¿Cuál es el río más caudaloso del mundo, que nace en el Perú?",o:["Marañón","Amazonas","Ucayali","Urubamba"],c:1},
+{s:"Geografía",q:"Según Javier Pulgar Vidal, ¿cuántas regiones naturales tiene el Perú?",o:["3","5","8","11"],c:2},
+{s:"Filosofía",q:"¿Quién es considerado el padre de la lógica formal?",o:["Platón","Aristóteles","Sócrates","Descartes"],c:1},
+{s:"Filosofía",q:"El método de la duda sistemática para alcanzar certeza fue propuesto por:",o:["Kant","Descartes","Hume","Locke"],c:1},
+{s:"Psicología",q:"¿Quién propuso la teoría del desarrollo psicosocial en ocho etapas?",o:["Piaget","Freud","Erikson","Kohlberg"],c:2},
+{s:"Psicología",q:"La memoria a corto plazo se caracteriza por tener:",o:["Capacidad ilimitada y permanente","Duración limitada y capacidad reducida","Ausencia total de olvido","Las mismas propiedades que la memoria de largo plazo"],c:1},
+{s:"Cívica",q:"¿Cuántos poderes del Estado conforman la República del Perú?",o:["2","3","4","5"],c:1},
+{s:"Cívica",q:"La Constitución Política vigente del Perú fue promulgada en:",o:["1979","1993","2000","1821"],c:1},
+{s:"Economía",q:"La inflación se define como:",o:["Una disminución generalizada de precios","Un aumento generalizado y sostenido de precios","Un aumento del desempleo","Una disminución de la producción"],c:1},
+{s:"Economía",q:"El Producto Bruto Interno (PBI) mide:",o:["La deuda externa de un país","El valor total de bienes y servicios producidos en un periodo","El nivel de desempleo","La balanza comercial"],c:1},
+{s:"Literatura",q:"¿Quién escribió “Los ríos profundos”?",o:["Mario Vargas Llosa","José María Arguedas","Ciro Alegría","José Santos Chocano"],c:1},
+{s:"Literatura",q:"¿Cuál de los siguientes autores NO pertenece al Boom Latinoamericano?",o:["Gabriel García Márquez","Mario Vargas Llosa","Miguel de Cervantes","Julio Cortázar"],c:2},
+{s:"Lenguaje",q:"El sinónimo de “efímero” es:",o:["duradero","pasajero","eterno","constante"],c:1},
+{s:"Lenguaje",q:"El antónimo de “parco” (moderado al hablar) es:",o:["locuaz","callado","sobrio","mesurado"],c:0},
+{s:"Razonamiento Verbal",q:"Complete la analogía: Médico es a hospital como profesor es a:",o:["escuela","libro","alumno","pizarra"],c:0},
+{s:"Razonamiento Verbal",q:"Complete la analogía: Libro es a biblioteca como cuadro es a:",o:["museo","pintor","marco","pared"],c:0},
+{s:"Química",q:"El pH de una solución neutra es:",o:["0","7","14","1"],c:1},
+{s:"Química",q:"¿Cuál es la fórmula química del agua?",o:["CO₂","H₂O","O₂","NaCl"],c:1},
+{s:"Física",q:"La velocidad de la luz en el vacío es aproximadamente:",o:["3×10⁵ m/s","3×10⁶ m/s","3×10⁸ m/s","3×10¹⁰ m/s"],c:2},
+{s:"Física",q:"La primera ley de Newton también se conoce como ley de:",o:["la acción y reacción","la inercia","la gravitación universal","la conservación de la energía"],c:1},
+{s:"Matemática",q:"¿Cuál es la raíz cuadrada de 144?",o:["10","11","12","14"],c:2},
+{s:"Aritmética",q:"En una proporción directa, si a=6 cuando b=2, ¿cuánto vale a cuando b=5?",o:["10","12","15","18"],c:2},
+{s:"Geometría",q:"El área de un círculo de radio 7 cm es aproximadamente (usando π=22/7):",o:["132 cm²","144 cm²","154 cm²","168 cm²"],c:2},
+{s:"Biología",q:"La fotosíntesis ocurre principalmente en:",o:["las mitocondrias","los cloroplastos","el núcleo","los ribosomas"],c:1},
+{s:"Biología",q:"El ADN tiene forma de:",o:["hélice simple","doble hélice","triple hélice","esfera"],c:1},
+];
+
+/* ================== LÓGICA DE LA APP ================== */
+const subjects = [...new Set(BANK.map(x=>x.s))];
+let selectedSubjects = new Set(subjects);
+let sizeMode = "all";
+let session = [];
+let idx = 0;
+let answers = []; // {picked, correct}
+
+const subjectGrid = document.getElementById('subjectGrid');
+subjects.forEach(subj=>{
+  const count = BANK.filter(x=>x.s===subj).length;
+  const chip = document.createElement('label');
+  chip.className = 'subject-chip active';
+  chip.innerHTML = `<span>${subj}</span><span class="cnt">${count}</span>`;
+  chip.addEventListener('click', ()=>{
+    if(selectedSubjects.has(subj)){ selectedSubjects.delete(subj); chip.classList.remove('active'); }
+    else { selectedSubjects.add(subj); chip.classList.add('active'); }
+  });
+  subjectGrid.appendChild(chip);
+});
+
+document.querySelectorAll('.size-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    sizeMode = btn.dataset.n;
+  });
+});
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  let pool = BANK.filter(x=>selectedSubjects.has(x.s));
+  if(pool.length===0){ alert('Selecciona al menos un curso.'); return; }
+  pool = shuffle(pool);
+  if(sizeMode!=='all'){ pool = pool.slice(0, Math.min(parseInt(sizeMode), pool.length)); }
+  session = pool;
+  answers = new Array(session.length).fill(null);
+  idx = 0;
+  document.getElementById('setup').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  renderQuestion();
+});
+
+function renderQuestion(){
+  const item = session[idx];
+  document.getElementById('qCounter').textContent = `Pregunta ${idx+1} de ${session.length}`;
+  document.getElementById('qSubject').textContent = item.s;
+  document.getElementById('qText').textContent = item.q;
+  document.getElementById('progressFill').style.width = `${(idx/session.length)*100}%`;
+
+  const wrap = document.getElementById('optsWrap');
+  wrap.innerHTML = '';
+  const letters = ['A','B','C','D','E'];
+  const prior = answers[idx];
+
+  item.o.forEach((opt, i)=>{
+    const el = document.createElement('div');
+    el.className = 'opt';
+    el.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    if(prior !== null){
+      el.classList.add('disabled');
+      if(i === item.c) el.classList.add('correct');
+      if(i === prior && prior !== item.c) el.classList.add('wrong');
+      if(i === prior && prior === item.c) el.classList.add('selected');
+    } else {
+      el.addEventListener('click', ()=>{
+        answers[idx] = i;
+        renderQuestion();
+      });
+    }
+    wrap.appendChild(el);
+  });
+
+  document.getElementById('prevBtn').disabled = idx===0;
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = prior === null;
+  nextBtn.textContent = idx === session.length-1 ? 'Ver resultados →' : 'Siguiente →';
+}
+
+document.getElementById('prevBtn').addEventListener('click', ()=>{ if(idx>0){ idx--; renderQuestion(); } });
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(idx < session.length-1){ idx++; renderQuestion(); }
+  else { showResults(); }
+});
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  let correct = 0;
+  const bySubject = {};
+  session.forEach((item, i)=>{
+    const ok = answers[i] === item.c;
+    if(ok) correct++;
+    if(!bySubject[item.s]) bySubject[item.s] = {ok:0, total:0};
+    bySubject[item.s].total++;
+    if(ok) bySubject[item.s].ok++;
+  });
+  document.getElementById('scoreNum').textContent = `${correct}/${session.length}`;
+  const pct = Math.round((correct/session.length)*100);
+  document.getElementById('scoreMsg').textContent = `${pct}% de respuestas correctas`;
+
+  const bd = document.getElementById('breakdown');
+  bd.innerHTML = '';
+  Object.entries(bySubject).sort((a,b)=>b[1].total-a[1].total).forEach(([subj, v])=>{
+    const row = document.createElement('div');
+    row.className = 'b-row';
+    const p = Math.round((v.ok/v.total)*100);
+    row.innerHTML = `<span class="name">${subj}</span><span class="bar-track"><span class="bar-fill" style="width:${p}%"></span></span><span class="frac">${v.ok}/${v.total}</span>`;
+    bd.appendChild(row);
+  });
+
+  try{
+    const history = JSON.parse(localStorage.getItem('balotario_history') || '[]');
+    history.push({date: new Date().toISOString(), score: correct, total: session.length});
+    localStorage.setItem('balotario_history', JSON.stringify(history));
+  }catch(e){}
+}
+
+document.getElementById('retryBtn').addEventListener('click', ()=>{
+  document.getElementById('results').style.display='none';
+  document.getElementById('setup').style.display='block';
+});
+
+document.getElementById('resetProgress').addEventListener('click', ()=>{
+  try{ localStorage.removeItem('balotario_history'); }catch(e){}
+  alert('Progreso guardado eliminado.');
+});
+
+document.getElementById('bankCount').textContent = BANK.length;
+</script>
+</body>
+</html>
